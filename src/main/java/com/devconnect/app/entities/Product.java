@@ -33,6 +33,7 @@ public class Product {
     private ProductType productType = ProductType.NEW;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
