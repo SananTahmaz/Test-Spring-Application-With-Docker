@@ -6,10 +6,11 @@ spring:
     url: jdbc:postgresql://postgres:5432/test_spring_app_db
     username: test_user
     password: test@pass
-    jpa:
-      hibernate:
-        ddl-auto: update
-      show-sql: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 server:
   port: 8080
