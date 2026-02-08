@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -30,7 +29,7 @@ public class Product {
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
-    private ProductType productType = ProductType.NEW;
+    private ProductType productType;
 
     @CreationTimestamp
     @Column(updatable = false)
