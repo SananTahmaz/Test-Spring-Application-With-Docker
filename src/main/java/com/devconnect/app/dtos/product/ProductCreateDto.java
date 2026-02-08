@@ -16,8 +16,8 @@ public class ProductCreateDto {
     @NotEmpty(message = "Name cannot be empty")
     private String name;
 
-    @NotNegative
     @NotNull(message = "Price cannot be null")
+    @NotNegative(message = "Price cannot be negative")
     private BigDecimal price;
     private ProductType productType;
 }

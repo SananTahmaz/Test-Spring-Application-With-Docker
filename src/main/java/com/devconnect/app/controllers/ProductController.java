@@ -1,5 +1,6 @@
 package com.devconnect.app.controllers;
 
+import com.devconnect.app.dtos.common.ApiResponse;
 import com.devconnect.app.dtos.product.ProductCreateDto;
 import com.devconnect.app.dtos.product.ProductDto;
 import com.devconnect.app.dtos.product.ProductUpdateDto;
@@ -21,32 +22,49 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDto> create(@Valid @RequestBody ProductCreateDto createDto) {
+    public ResponseEntity<ApiResponse<ProductDto>> create(@Valid @RequestBody ProductCreateDto createDto) {
         ProductDto productDto = productService.create(createDto);
-        return new ResponseEntity<>(productDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                ApiResponse.success(productDto, "Product created successfully"),
+                HttpStatus.CREATED
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ProductDto>> getById(@PathVariable Long id) {
         ProductDto productDto = productService.getById(id);
-        return new ResponseEntity<>(productDto, HttpStatus.OK);
+        return new ResponseEntity<>(
+                ApiResponse.success(productDto, "Product fetched successfully"),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAll() {
+    public ResponseEntity<ApiResponse<List<ProductDto>>> getAll() {
         List<ProductDto> productDtoList = productService.getAll();
-        return new ResponseEntity<>(productDtoList, HttpStatus.OK);
+        return new ResponseEntity<>(
+                ApiResponse.success(productDtoList, "Product list fetched successfully"),
+                HttpStatus.OK
+        );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDto> create(@PathVariable Long id, @Valid @RequestBody ProductUpdateDto updateDto) {
+    public ResponseEntity<ApiResponse<ProductDto>> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductUpdateDto updateDto) {
         ProductDto productDto = productService.update(id, updateDto);
-        return new ResponseEntity<>(productDto, HttpStatus.OK);
+        return new ResponseEntity<>(
+                ApiResponse.success(productDto, "Product updated successfully"),
+                HttpStatus.OK
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         productService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(
+                ApiResponse.success("Product created successfully"),
+                HttpStatus.NO_CONTENT
+        );
     }
 }

@@ -38,4 +38,11 @@ public class Product {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (productType == null) {
+            productType = ProductType.NEW;
+        }
+    }
 }
