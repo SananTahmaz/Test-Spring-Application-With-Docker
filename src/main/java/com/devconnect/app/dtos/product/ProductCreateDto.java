@@ -1,5 +1,6 @@
 package com.devconnect.app.dtos.product;
 
+import com.devconnect.app.annotations.NotNegative;
 import com.devconnect.app.enums.ProductType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -15,6 +16,7 @@ public class ProductCreateDto {
     @NotEmpty(message = "Name cannot be empty")
     private String name;
 
+    @NotNegative
     @NotNull(message = "Price cannot be null")
     private BigDecimal price;
     private ProductType productType;
