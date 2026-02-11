@@ -8,8 +8,10 @@ import com.devconnect.app.exceptions.AlreadyExistsException;
 import com.devconnect.app.exceptions.NotFoundException;
 import com.devconnect.app.mappers.CategoryMapper;
 import com.devconnect.app.repositories.CategoryRepository;
+import com.devconnect.app.repositories.ProductRepository;
 import com.devconnect.app.services.CategoryService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,13 +21,19 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
-    public CategoryServiceImpl(CategoryMapper categoryMapper, CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(
+            CategoryMapper categoryMapper,
+            CategoryRepository categoryRepository,
+            ProductRepository productRepository) {
         this.categoryMapper = categoryMapper;
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
+    @Transactional
     public CategoryDto create(CategoryCreateDto createDto) {
         Optional<Category> foundCategory = categoryRepository.findByName(createDto.getName());
         if (foundCategory.isPresent()) {
@@ -40,6 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDto getById(Long id) {
         Category category = categoryRepository
                 .findById(id)
@@ -48,6 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDto> getAll() {
         return categoryRepository
                 .findAll()
@@ -57,6 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto update(Long id, CategoryUpdateDto updateDto) {
         Category category = categoryRepository
                 .findById(id)
@@ -75,10 +86,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         Category category = categoryRepository
                 .findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Category not found with id: %d", id)));
+
+        categoryRepository.clearCategoryFromProducts(id);
         categoryRepository.delete(category);
     }
 }
