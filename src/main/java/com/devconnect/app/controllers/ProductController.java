@@ -30,6 +30,37 @@ public class ProductController {
         );
     }
 
+    @PostMapping("/with-category")
+    public ResponseEntity<ApiResponse<ProductDto>> createWithCategory(
+            @Valid @RequestBody ProductCreateDto createDto,
+            @RequestParam(required = false) Long categoryId) {
+        ProductDto productDto = productService.createWithCategory(createDto, categoryId);
+        return new ResponseEntity<>(
+                ApiResponse.success(productDto, "Product created successfully"),
+                HttpStatus.CREATED
+        );
+    }
+
+    @PutMapping("/{productId}/category/{categoryId}")
+    public ResponseEntity<ApiResponse<Void>> addProductToCategory(
+            @PathVariable Long productId,
+            @PathVariable Long categoryId) {
+        productService.addToCategory(productId, categoryId);
+        return new ResponseEntity<>(
+                ApiResponse.success("Product added successfully to category"),
+                HttpStatus.CREATED
+        );
+    }
+
+    @DeleteMapping("/{productId}/category")
+    public ResponseEntity<ApiResponse<Void>> removeProductFromCategory(@PathVariable Long productId) {
+        productService.removeFromCategory(productId);
+        return new ResponseEntity<>(
+                ApiResponse.success("Product removed successfully from category"),
+                HttpStatus.CREATED
+        );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductDto>> getById(@PathVariable Long id) {
         ProductDto productDto = productService.getById(id);

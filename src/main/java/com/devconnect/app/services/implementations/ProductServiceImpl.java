@@ -3,9 +3,11 @@ package com.devconnect.app.services.implementations;
 import com.devconnect.app.dtos.product.ProductCreateDto;
 import com.devconnect.app.dtos.product.ProductDto;
 import com.devconnect.app.dtos.product.ProductUpdateDto;
+import com.devconnect.app.entities.Category;
 import com.devconnect.app.entities.Product;
 import com.devconnect.app.exceptions.NotFoundException;
 import com.devconnect.app.mappers.ProductMapper;
+import com.devconnect.app.repositories.CategoryRepository;
 import com.devconnect.app.repositories.ProductRepository;
 import com.devconnect.app.services.ProductService;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,15 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductServiceImpl(ProductMapper productMapper, ProductRepository productRepository) {
+    public ProductServiceImpl(
+            ProductMapper productMapper,
+            ProductRepository productRepository,
+            CategoryRepository categoryRepository) {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -30,6 +37,45 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.toEntity(createDto);
         Product savedProduct = productRepository.save(product);
         return productMapper.toDto(savedProduct);
+    }
+
+    @Override
+    @Transactional
+    public ProductDto createWithCategory(ProductCreateDto createDto, Long categoryId) {
+        Product product = productMapper.toEntity(createDto);
+        if (categoryId != null) {
+            Category category = categoryRepository
+                    .findById(categoryId)
+                    .orElseThrow(
+                            () -> new NotFoundException(String.format("Category not found with id: %d", categoryId))
+                    );
+            product.setCategory(category);
+        }
+
+        Product savedProduct = productRepository.save(product);
+        return productMapper.toDto(savedProduct);
+    }
+
+    @Override
+    @Transactional
+    public void addToCategory(Long id, Long categoryId) {
+        Product product = productRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Product not found with id: %d", id)));
+
+        Category category = categoryRepository
+                .findById(categoryId)
+                .orElseThrow(() -> new NotFoundException(String.format("Category not found with id: %d", categoryId)));
+        product.setCategory(category);
+    }
+
+    @Override
+    @Transactional
+    public void removeFromCategory(Long id) {
+        Product product = productRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Product not found with id: %d", id)));
+        product.setCategory(null);
     }
 
     @Override
