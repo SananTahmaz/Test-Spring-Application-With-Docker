@@ -1,14 +1,13 @@
 package com.devconnect.app.entities;
 
-import com.devconnect.app.enums.ProductType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -16,8 +15,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "products")
-public class Product {
+@Table(name = "categories")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,15 +24,8 @@ public class Product {
     @NotNull
     private String name;
 
-    @NotNull
-    private BigDecimal price;
-
-    @Enumerated(EnumType.STRING)
-    private ProductType productType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @OneToMany(mappedBy = "category")
+    private List<Product> productList;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -41,11 +33,4 @@ public class Product {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    public void prePersist() {
-        if (productType == null) {
-            productType = ProductType.NEW;
-        }
-    }
 }
