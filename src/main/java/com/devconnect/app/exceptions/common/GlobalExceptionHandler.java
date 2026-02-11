@@ -2,6 +2,7 @@ package com.devconnect.app.exceptions.common;
 
 import com.devconnect.app.dtos.common.ApiResponse;
 import com.devconnect.app.dtos.common.ValidationErrorResponse;
+import com.devconnect.app.exceptions.AlreadyExistsException;
 import com.devconnect.app.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,11 @@ public class GlobalExceptionHandler {
 
         ValidationErrorResponse response = new ValidationErrorResponse("Validation failed", errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Object>> handleNotFoundException(AlreadyExistsException ex) {
+        return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(NotFoundException.class)
