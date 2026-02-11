@@ -62,6 +62,13 @@ public class CategoryServiceImpl implements CategoryService {
                 .findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Category not found with id: %d", id)));
 
+        Optional<Category> foundCategory = categoryRepository.findByName(updateDto.getName());
+        if (foundCategory.isPresent()) {
+            throw new AlreadyExistsException(
+                    String.format("Category already exists with name: %s", updateDto.getName())
+            );
+        }
+
         categoryMapper.updateEntity(updateDto, category);
         Category updatedCategory = categoryRepository.save(category);
         return categoryMapper.toDto(updatedCategory);
