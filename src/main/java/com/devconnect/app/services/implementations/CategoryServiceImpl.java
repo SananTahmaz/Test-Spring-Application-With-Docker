@@ -2,14 +2,19 @@ package com.devconnect.app.services.implementations;
 
 import com.devconnect.app.dtos.category.CategoryCreateDto;
 import com.devconnect.app.dtos.category.CategoryDto;
+import com.devconnect.app.dtos.category.CategorySearchDto;
 import com.devconnect.app.dtos.category.CategoryUpdateDto;
 import com.devconnect.app.entities.Category;
 import com.devconnect.app.exceptions.AlreadyExistsException;
 import com.devconnect.app.exceptions.NotFoundException;
 import com.devconnect.app.mappers.CategoryMapper;
 import com.devconnect.app.repositories.CategoryRepository;
-import com.devconnect.app.repositories.ProductRepository;
 import com.devconnect.app.services.CategoryService;
+import com.devconnect.app.specifications.CategorySpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +26,10 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
-    private final ProductRepository productRepository;
 
-    public CategoryServiceImpl(
-            CategoryMapper categoryMapper,
-            CategoryRepository categoryRepository,
-            ProductRepository productRepository) {
+    public CategoryServiceImpl(CategoryMapper categoryMapper, CategoryRepository categoryRepository) {
         this.categoryMapper = categoryMapper;
         this.categoryRepository = categoryRepository;
-        this.productRepository = productRepository;
     }
 
     @Override
@@ -64,6 +64,30 @@ public class CategoryServiceImpl implements CategoryService {
                 .stream()
                 .map(categoryMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryDto> search(CategorySearchDto searchDto, Sort sort) {
+        Sort defaultSort = sort.isUnsorted()
+                ? Sort.by(Sort.Direction.DESC, "createdAt")
+                : sort;
+
+        Specification<Category> categorySpecification = CategorySpecification.build(searchDto);
+        return categoryRepository
+                .findAll(categorySpecification, defaultSort)
+                .stream()
+                .map(categoryMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CategoryDto> search(CategorySearchDto searchDto, Pageable pageable) {
+        Specification<Category> categorySpecification = CategorySpecification.build(searchDto);
+        return categoryRepository
+                .findAll(categorySpecification, pageable)
+                .map(categoryMapper::toDto);
     }
 
     @Override

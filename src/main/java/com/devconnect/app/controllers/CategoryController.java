@@ -2,10 +2,15 @@ package com.devconnect.app.controllers;
 
 import com.devconnect.app.dtos.category.CategoryCreateDto;
 import com.devconnect.app.dtos.category.CategoryDto;
+import com.devconnect.app.dtos.category.CategorySearchDto;
 import com.devconnect.app.dtos.category.CategoryUpdateDto;
 import com.devconnect.app.dtos.common.ApiResponse;
 import com.devconnect.app.services.CategoryService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +49,26 @@ public class CategoryController {
         List<CategoryDto> categoryDtoList = categoryService.getAll();
         return new ResponseEntity<>(
                 ApiResponse.success(categoryDtoList, "Category list fetched successfully"),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<CategoryDto>>> searchAll(CategorySearchDto searchDto, Sort sort) {
+        List<CategoryDto> categoryDtoList = categoryService.search(searchDto, sort);
+        return new ResponseEntity<>(
+                ApiResponse.success(categoryDtoList, "Category list fetched successfully"),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/search/paginated")
+    public ResponseEntity<ApiResponse<Page<CategoryDto>>> searchPaginated(
+            CategorySearchDto searchDto,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<CategoryDto> categoryDtoPage = categoryService.search(searchDto, pageable);
+        return new ResponseEntity<>(
+                ApiResponse.success(categoryDtoPage, "Category list fetched successfully"),
                 HttpStatus.OK
         );
     }
