@@ -4,16 +4,14 @@ import com.devconnect.app.dtos.product.ProductCreateDto;
 import com.devconnect.app.dtos.product.ProductDto;
 import com.devconnect.app.dtos.product.ProductUpdateDto;
 import com.devconnect.app.entities.Product;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ProductMapper {
     private final ModelMapper modelMapper;
-
-    public ProductMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
 
     public ProductDto toDto(Product product) {
         return modelMapper.map(product, ProductDto.class);

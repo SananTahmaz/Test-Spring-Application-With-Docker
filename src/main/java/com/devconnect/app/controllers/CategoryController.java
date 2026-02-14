@@ -7,6 +7,7 @@ import com.devconnect.app.dtos.category.CategoryUpdateDto;
 import com.devconnect.app.dtos.common.ApiResponse;
 import com.devconnect.app.services.CategoryService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,12 +20,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categories")
+@RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     @PostMapping
     public ResponseEntity<ApiResponse<CategoryDto>> create(@Valid @RequestBody CategoryCreateDto createDto) {

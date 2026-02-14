@@ -4,16 +4,14 @@ import com.devconnect.app.dtos.category.CategoryCreateDto;
 import com.devconnect.app.dtos.category.CategoryDto;
 import com.devconnect.app.dtos.category.CategoryUpdateDto;
 import com.devconnect.app.entities.Category;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CategoryMapper {
     private final ModelMapper modelMapper;
-
-    public CategoryMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
 
     public CategoryDto toDto(Category category) {
         return modelMapper.map(category, CategoryDto.class);

@@ -7,6 +7,7 @@ import com.devconnect.app.dtos.product.ProductSearchDto;
 import com.devconnect.app.dtos.product.ProductUpdateDto;
 import com.devconnect.app.services.ProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,12 +20,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @PostMapping
     public ResponseEntity<ApiResponse<ProductDto>> create(@Valid @RequestBody ProductCreateDto createDto) {

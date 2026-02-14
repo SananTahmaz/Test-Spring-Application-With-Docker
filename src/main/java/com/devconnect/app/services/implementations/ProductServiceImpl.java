@@ -12,6 +12,7 @@ import com.devconnect.app.repositories.CategoryRepository;
 import com.devconnect.app.repositories.ProductRepository;
 import com.devconnect.app.services.ProductService;
 import com.devconnect.app.specifications.ProductSpecification;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,19 +24,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-
-    public ProductServiceImpl(
-            ProductMapper productMapper,
-            ProductRepository productRepository,
-            CategoryRepository categoryRepository) {
-        this.productMapper = productMapper;
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-    }
 
     @Override
     @Transactional
