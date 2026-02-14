@@ -26,6 +26,6 @@ public enum ProductType {
                 return productType;
             }
         }
-        throw new IllegalArgumentException(String.format("Invalid ProductType: %s", value));
+        throw new IllegalArgumentException(String.format("Invalid product type: %s", value));
     }
 }
