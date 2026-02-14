@@ -2,6 +2,7 @@ package com.devconnect.app.services.implementations;
 
 import com.devconnect.app.dtos.product.ProductCreateDto;
 import com.devconnect.app.dtos.product.ProductDto;
+import com.devconnect.app.dtos.product.ProductSearchDto;
 import com.devconnect.app.dtos.product.ProductUpdateDto;
 import com.devconnect.app.entities.Category;
 import com.devconnect.app.entities.Product;
@@ -10,6 +11,11 @@ import com.devconnect.app.mappers.ProductMapper;
 import com.devconnect.app.repositories.CategoryRepository;
 import com.devconnect.app.repositories.ProductRepository;
 import com.devconnect.app.services.ProductService;
+import com.devconnect.app.specifications.ProductSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,6 +101,30 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDto> search(ProductSearchDto searchDto, Sort sort) {
+        Sort defaultSort = sort.isUnsorted()
+                ? Sort.by(Sort.Direction.DESC, "createdAt")
+                : sort;
+
+        Specification<Product> productSpecification = ProductSpecification.build(searchDto);
+        return productRepository
+                .findAll(productSpecification, defaultSort)
+                .stream()
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductDto> search(ProductSearchDto searchDto, Pageable pageable) {
+        Specification<Product> productSpecification = ProductSpecification.build(searchDto);
+        return productRepository
+                .findAll(productSpecification, pageable)
+                .map(productMapper::toDto);
     }
 
     @Override
