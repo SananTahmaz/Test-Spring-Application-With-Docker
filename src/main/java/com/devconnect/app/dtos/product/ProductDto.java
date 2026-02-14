@@ -12,6 +12,7 @@ public class ProductDto {
     private String name;
     private BigDecimal price;
     private ProductType productType;
+    private Long categoryId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
