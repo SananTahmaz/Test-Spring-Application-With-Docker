@@ -3,9 +3,14 @@ package com.devconnect.app.controllers;
 import com.devconnect.app.dtos.common.ApiResponse;
 import com.devconnect.app.dtos.product.ProductCreateDto;
 import com.devconnect.app.dtos.product.ProductDto;
+import com.devconnect.app.dtos.product.ProductSearchDto;
 import com.devconnect.app.dtos.product.ProductUpdateDto;
 import com.devconnect.app.services.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -75,6 +80,26 @@ public class ProductController {
         List<ProductDto> productDtoList = productService.getAll();
         return new ResponseEntity<>(
                 ApiResponse.success(productDtoList, "Product list fetched successfully"),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<ProductDto>>> searchAll(ProductSearchDto searchDto, Sort sort) {
+        List<ProductDto> productDtoList = productService.search(searchDto, sort);
+        return new ResponseEntity<>(
+                ApiResponse.success(productDtoList, "Product list fetched successfully"),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/search/paginated")
+    public ResponseEntity<ApiResponse<Page<ProductDto>>> searchPaginated(
+            ProductSearchDto searchDto,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ProductDto> productDtoPage = productService.search(searchDto, pageable);
+        return new ResponseEntity<>(
+                ApiResponse.success(productDtoPage, "Product list fetched successfully"),
                 HttpStatus.OK
         );
     }
